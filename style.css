@@ -1,0 +1,556 @@
+/* ===================================================
+   AGENTIC FACILITYOPS AI PLATFORM
+   PROFESSIONAL LIGHT ENTERPRISE THEME
+=================================================== */
+
+/* Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ==============================
+   GLOBAL
+==============================*/
+
+html,
+body,
+[class*="css"]{
+    font-family:'Inter',sans-serif;
+}
+
+html,
+body,
+.stApp,
+.main,
+[data-testid="stAppViewContainer"],
+[data-testid="stMain"]{
+    background:#ECFDF5 !important;
+}
+
+.stApp{
+    background:#ECFDF5 !important;
+}
+
+
+
+/* ==============================
+   SIDEBAR
+==============================*/
+section[data-testid="stSidebar"]{
+    background:#263238;
+}
+
+section[data-testid="stSidebar"] *{
+    color:white !important;
+}
+
+section[data-testid="stSidebar"] h1{
+    color:white;
+}
+
+/* ==============================
+   HEADINGS
+==============================*/
+
+h1{
+    color:#1E293B !important;
+    font-weight:700;
+}
+
+h2{
+    color:#1E293B !important;
+}
+
+h3{
+    color:#334155 !important;
+}
+
+/* Don't affect button text */
+body > p,
+.stMarkdown p {
+    color: #64748B;
+}
+
+/* ==============================
+   SELECTBOX
+==============================*/
+
+.stSelectbox>div>div{
+    border-radius:10px;
+}
+
+/* ==============================
+   DATAFRAME
+==============================*/
+
+[data-testid="stDataFrame"]{
+    border-radius:14px;
+    border:1px solid #E2E8F0;
+}
+
+/* ==============================
+   SUCCESS
+==============================*/
+
+.stSuccess{
+    border-left:5px solid #22C55E;
+}
+
+/* ==============================
+   WARNING
+==============================*/
+
+.stWarning{
+    border-left:5px solid #F59E0B;
+}
+
+/* ==============================
+   ERROR
+==============================*/
+
+.stError{
+    border-left:5px solid #EF4444;
+}
+
+/* ==============================
+   HERO CARD
+==============================*/
+
+.hero{
+    background:linear-gradient(135deg,#00897B,#00695C);
+    color:white;
+    padding:45px;
+    border-radius:22px;
+    box-shadow:0 12px 30px rgba(30,64,175,.25);
+    margin-bottom:35px;
+}
+
+.hero h1{
+    color:white !important;
+    font-size:48px;
+    margin-bottom:8px;
+}
+
+.hero p{
+    color:#E2E8F0;
+    font-size:21px;
+}
+
+.hero h1,
+.hero h2 {
+    color: #FFFFFF !important;
+}
+
+.hero h2 {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+/* ==============================
+   SECTION TITLE
+==============================*/
+
+.section-title{
+    font-size:28px;
+    font-weight:700;
+    color:#1E293B;
+    margin-top:25px;
+    margin-bottom:20px;
+}
+
+/* ==============================
+   CUSTOM CARD
+==============================*/
+
+.custom-card{
+    background:#FFFFFF;
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+    border:none;
+}
+
+.custom-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 12px 25px rgba(0,0,0,.10);
+}
+
+/* ==============================
+   INFO CARD
+==============================*/
+
+.info-card{
+    background:white;
+    border-radius:15px;
+    padding:20px;
+    border:1px solid #E2E8F0;
+    margin-bottom:20px;
+}
+
+.info-card h3{
+    color:#2563EB !important;
+}
+
+/* ==============================
+   HORIZONTAL LINE
+==============================*/
+
+hr{
+    border:none;
+    border-top:1px solid #0d5050;
+}
+
+/* ===== Streamlit Header ===== */
+
+header[data-testid="stHeader"]{
+    background:#ECFDF5 !important;
+    border-bottom:1px solid #D1FAE5;
+}
+
+/* Remove rainbow decoration */
+div[data-testid="stDecoration"]{
+    display:none;
+}
+
+/* Keep toolbar visible */
+div[data-testid="stToolbar"]{
+    visibility:visible;
+}
+
+/* Main content */
+/* Main content spacing */
+.block-container{
+    padding-top: 5rem !important;
+    padding-left: 3rem;
+    padding-right: 3rem;
+    padding-bottom: 2rem;
+}
+
+/* ===================================================
+   SIDEBAR SETTINGS BUTTON - BOTTOM
+=================================================== */
+
+/* Sidebar content area */
+section[data-testid="stSidebar"] > div {
+    position: relative;
+}
+
+/* Add space at bottom so settings does not overlap navigation */
+section[data-testid="stSidebar"] div[data-testid="stSidebarUserContent"] {
+    padding-bottom: 70px;
+}
+
+/* Position the last popover at bottom */
+section[data-testid="stSidebar"] div[data-testid="stPopover"] {
+    position: fixed;
+    bottom: 20px;
+    left: 15px;
+    z-index: 999;
+}
+
+/* Settings button */
+section[data-testid="stSidebar"] div[data-testid="stPopover"] button {
+    width: 45px;
+    height: 42px;
+    border-radius: 10px;
+}
+
+/* =========================================
+   FIX MARKDOWN TEXT VISIBILITY
+========================================= */
+
+.stApp div[data-testid="stMarkdownContainer"] p {
+    color: #475569 !important;
+}
+
+.stApp div[data-testid="stMarkdownContainer"] li {
+    color: #475569 !important;
+}
+
+.stApp div[data-testid="stMarkdownContainer"] ul {
+    color: #475569 !important;
+}
+
+/* Keep sidebar text white */
+section[data-testid="stSidebar"]
+div[data-testid="stMarkdownContainer"] p,
+
+section[data-testid="stSidebar"]
+div[data-testid="stMarkdownContainer"] li {
+    color: white !important;
+}
+
+/* =========================================
+   MARKDOWN TEXT VISIBILITY
+========================================= */
+
+.stApp div[data-testid="stMarkdownContainer"] p,
+.stApp div[data-testid="stMarkdownContainer"] li {
+    color: #475569 !important;
+}
+
+/* Sidebar text stays white */
+section[data-testid="stSidebar"]
+div[data-testid="stMarkdownContainer"] p,
+
+section[data-testid="stSidebar"]
+div[data-testid="stMarkdownContainer"] li {
+    color: white !important;
+}
+
+
+/* =========================================
+   DIVIDERS
+========================================= */
+
+hr {
+    border: none !important;
+    border-top: 1px solid #A8BDD4 !important;
+    margin-top: 28px !important;
+    margin-bottom: 28px !important;
+}
+
+
+/* =========================================
+   BORDERED STREAMLIT CONTAINERS
+
+   This gives borders to:
+   - KPI outer cards
+   - Platform Module cards
+   - Dashboard chart sections
+   - Any st.container(border=True)
+========================================= */
+
+/* =========================================
+   STREAMLIT BORDERED CONTAINERS
+========================================= */
+
+div[data-testid="stVerticalBlockBorderWrapper"]{
+    background: #FFFFFF !important;
+    border: 2px solid #B2DFDB !important;
+    border-radius: 16px !important;
+    padding: 24px !important;
+    margin-bottom: 24px !important;
+    box-shadow: 0 6px 18px rgba(15,23,42,0.08) !important;
+}
+
+
+/* =========================================
+   KPI METRIC
+   No separate inner card
+========================================= */
+
+div[data-testid="stMetric"] {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border-left:5px solid #00897B;
+}
+
+div[data-testid="stMetric"] > div {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+
+/* =========================================
+   CHARTS
+========================================= */
+
+div[data-testid="stImage"],
+div[data-testid="stPlotlyChart"] {
+    border-radius: 10px !important;
+}
+
+
+/* Fix border color for st.container(border=True) */
+div.stVerticalBlock {
+    border-color: #94AFCB !important;
+}
+
+.hero h1 {
+    color: #FFFFFF !important;
+}
+
+.hero p {
+    color: #E2E8F0 !important;
+}
+
+/* =========================================
+   STREAMLIT BUTTONS
+========================================= */
+
+.stButton > button {
+    background: #00897B !important;
+    border: none !important;
+    border-radius: 10px !important;
+    height: 46px;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+/* Override global markdown paragraph color */
+.stApp .stButton > button,
+.stApp .stButton > button p,
+.stApp .stButton > button div,
+.stApp .stButton > button span {
+    color: #FFFFFF !important;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.stButton > button:hover {
+    background: #00695C !important;
+    transform: translateY(-2px);
+}
+
+.stApp .stButton > button:hover,
+.stApp .stButton > button:hover p,
+.stApp .stButton > button:hover div,
+.stApp .stButton > button:hover span {
+    color: #FFFFFF !important;
+}
+
+
+/* Buttons */
+.stButton > button,
+.stForm button {
+    width: 100%;
+    background-color: #00897B !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 12px 18px !important;
+    font-weight: 600 !important;
+}
+
+/* Hover */
+.stButton > button:hover,
+.stForm button:hover {
+    background-color: #00897B !important;
+    color: #FFFFFF !important;
+}
+
+/* Button text */
+.stButton > button p,
+.stButton > button span,
+.stForm button p,
+.stForm button span {
+    color: #FFFFFF !important;
+}
+
+
+/* ===== FINAL OVERRIDE FOR FORM SUBMIT BUTTON ===== */
+
+button[kind="primaryFormSubmit"] div[data-testid="stMarkdownContainer"] p {
+    color: #FFFFFF !important;
+}
+
+button[kind="primaryFormSubmit"] div[data-testid="stMarkdownContainer"] {
+    color: #FFFFFF !important;
+}
+
+button[kind="primaryFormSubmit"] {
+    color: #FFFFFF !important;
+}
+
+
+/* =========================================
+   WORK ORDER CARD
+========================================= */
+
+.workorder-card{
+    background:#FFFFFF;
+    border:2px solid #94AFCB;
+    border-radius:18px;
+    padding:28px;
+    margin-bottom:25px;
+    box-shadow:0 8px 24px rgba(15,23,42,.08);
+}
+
+.workorder-title{
+    font-size:30px;
+    font-weight:700;
+    color:#1E293B;
+    margin-bottom:10px;
+}
+
+.workorder-subtitle{
+    font-size:16px;
+    color:#64748B;
+    margin-bottom:25px;
+}
+
+/* =========================================
+   STREAMLIT CONTAINERS
+========================================= */
+/* =========================================
+   STREAMLIT BORDERED CONTAINERS
+========================================= */
+
+div[data-testid="stVerticalBlockBorderWrapper"]{
+    background: #FFFFFF !important;
+    border: 2px solid #B2DFDB !important;
+    border-radius: 16px !important;
+    padding: 24px !important;
+    margin-bottom: 24px !important;
+    box-shadow: 0 6px 18px rgba(15,23,42,0.08) !important;
+}
+
+
+/* Download Button */
+div[data-testid="stDownloadButton"] > button {
+    background-color: #00897B !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    border: none !important;
+    font-weight: 600 !important;
+}
+
+div[data-testid="stDownloadButton"] > button * {
+    color: #FFFFFF !important;
+    fill: #FFFFFF !important;
+}
+
+.stTextInput input {
+    border: 2px solid #10B981 !important;
+    border-radius: 10px !important;
+    padding: 8px;
+}
+
+.stTextInput input:focus {
+    border-color: #047857 !important;
+    box-shadow: 0 0 0 3px rgba(16,185,129,.2);
+}
+
+.stNumberInput input {
+    border: 2px solid #10B981 !important;
+    border-radius: 10px !important;
+}
+
+.stDateInput > div {
+    border: 2px solid #10B981 !important;
+    border-radius: 10px !important;
+}
+
+.stTextArea textarea {
+    border: 2px solid #10B981 !important;
+    border-radius: 10px !important;
+}
+
+/* Selectbox */
+div[data-baseweb="select"] > div {
+    border: 2px solid #10B981 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+}
+
+/* Hover */
+div[data-baseweb="select"] > div:hover {
+    border-color: #059669 !important;
+}
+
+/* Focus */
+div[data-baseweb="select"]:focus-within > div {
+    border-color: #047857 !important;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}

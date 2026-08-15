@@ -81,6 +81,12 @@ preventive_maintenance = st.Page(
     icon="🛠️"
 )
 
+user_management = st.Page(
+    "pages/8_👥_User_Management.py",
+    title="User Management",
+    icon="👥"
+)
+
 
 # ============================================================
 # LOGOUT FUNCTION
@@ -132,7 +138,8 @@ else:
             machine_explorer,
             ai_assistant,
             work_orders,
-            preventive_maintenance
+            preventive_maintenance,
+            user_management
         ]
 
 

@@ -175,7 +175,29 @@ if st.session_state.report_generated:
                         maintenance_type_val = st.selectbox("Maintenance Type", m_options, index=m_idx)
 
                     with right:
-                        technician_val = st.text_input("Technician", value=data.get("technician", "Maintenance Engineer"))
+
+                        technicians_df = get_technicians()
+
+                        if technicians_df.empty:
+                            st.warning("No technicians available.")
+                            technician_val = None
+
+                        else:
+                            technician_names = technicians_df["name"].tolist()
+
+                            current_technician = data.get("technician", "")
+
+                            if current_technician in technician_names:
+                                default_index = technician_names.index(current_technician)
+                            else:
+                                default_index = 0
+
+                            technician_val = st.selectbox(
+                                "👨‍🔧 Technician",
+                                technician_names,
+                                index=default_index,
+                                key="ai_technician"
+                            )
                         due_date_val = st.date_input("Due Date")
                         estimated_cost_val = st.text_input("Estimated Cost", value=data.get("estimated_cost", 10000))
                         estimated_time_val = st.text_input("Estimated Time", value=data.get("estimated_time", "2 Hours"))

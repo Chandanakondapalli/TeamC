@@ -123,70 +123,32 @@ with center:
 
             if not username.strip() or not password.strip():
 
-                st.error(
-                    "Please enter username and password."
-                )
+                st.error("Please enter username and password.")
 
             else:
 
-                demo_users = {
-                    "john": {
-                        "password": "tech123",
-                        "name": "John Smith",
-                        "role": "Technician"
-                    },
-
-                    "sarah": {
-                        "password": "tech123",
-                        "name": "Sarah Wilson",
-                        "role": "Technician"
-                    },
-
-                    "david": {
-                        "password": "tech123",
-                        "name": "David Lee",
-                        "role": "Technician"
-                    },
-
-                    "michael": {
-                        "password": "tech123",
-                        "name": "Michael Brown",
-                        "role": "Technician"
-                    },
-
-                    "employee": {
-                        "password": "employee123",
-                        "name": "Facility Employee",
-                        "role": "Employee"
-                    }
-
-                }
-
-                user = demo_users.get(
-                    username.lower()
+                # Authenticate directly against SQLite database
+                user = authenticate_user(
+                    username.strip(),
+                    password,
+                    role
                 )
 
-                if user and user["password"] == password:
+                if user:
 
-                    if user["role"] != role:
+                    # Store authenticated user information
+                    st.session_state.authenticated = True
+                    st.session_state.user_role = user["role"]
+                    st.session_state.user_name = user["name"]
+                    st.session_state.username = user["username"]
 
-                        st.error(
-                            f"This account is registered as {user['role']}."
-                        )
+                    st.success("Login successful!")
 
-                    else:
-
-                        st.session_state.authenticated = True
-                        st.session_state.user_role = user["role"]
-                        st.session_state.user_name = user["name"]
-                        st.session_state.username = username
-
-                        st.success("Login successful!")
-
-                        st.rerun()
+                    # Rerun so the main router opens Home
+                    st.rerun()
 
                 else:
 
                     st.error(
-                        "Invalid username or password."
+                        "Invalid username, password, or role."
                     )

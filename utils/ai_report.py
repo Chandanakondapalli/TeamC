@@ -167,7 +167,8 @@ def maintenance_priority(risk):
     priorities = {
         "Low": "Low",
         "Medium": "Medium",
-        "High": "High"
+        "High": "High",
+        "Critical": "Critical"
     }
 
     return priorities[risk]
@@ -182,7 +183,8 @@ def maintenance_cost(risk):
     costs = {
         "Low": "2,500",
         "Medium": "8,000",
-        "High": "20,000"
+        "High": "20,000",
+        "Critical": "50,000"
     }
 
     return costs[risk]
@@ -420,25 +422,21 @@ RULES
 
             maintenance_type = "Preventive"
             estimated_time = "1 Hour"
-            technician = "Routine Maintenance Team"
 
         elif eng["risk"] == "Medium":
 
             maintenance_type = "Predictive"
             estimated_time = "2 Hours"
-            technician = "Maintenance Technician"
 
         elif eng["risk"] == "High":
 
             maintenance_type = "Corrective"
             estimated_time = "4 Hours"
-            technician = "Senior Maintenance Engineer"
 
         else:
 
             maintenance_type = "Emergency"
             estimated_time = "8 Hours"
-            technician = "Mechanical & Electrical Engineer"
 
         ai_summary = (
             f"TECHNICAL AUDIT: Machine {machine['Product ID']} shows {eng['risk']} risk status. "
@@ -457,7 +455,7 @@ RULES
             "machine_type": machine["Type"],
             "priority": eng["priority"],
             "maintenance_type": maintenance_type,
-            "technician": technician,
+            "technician":"",
             "status": "Open",
             "created_date": datetime.now().strftime("%Y-%m-%d"),
             "estimated_cost": eng["maintenance_cost"],

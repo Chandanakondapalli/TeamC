@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 import pandas as pd
 import plotly.express as px
 from datetime import date, datetime
@@ -22,6 +23,9 @@ DEFAULT_CHECKLIST = [
     "Inspect belts", "Lubricate bearings", "Clean filters",
     "Check motor temperature", "Tighten bolts", "Safety inspection"
 ]
+
+if "edit_schedule_id" not in st.session_state:
+    st.session_state.edit_schedule_id = None
 
 @st.cache_data
 def load_data():
@@ -95,16 +99,20 @@ with tab1:
         col1, col2, col3 = st.columns(3)
         with col1:
             # 4. Technician Placeholder
+            technicians_df = get_technicians()
+            technician_names = technicians_df["name"].tolist()
+
             technician = st.selectbox(
-                "Assign Staff", 
-                options=["", "John Smith", "Sarah Wilson", "Michael Brown", "David Lee"],
+                "Assign Staff",
+                options=[""] + technician_names,
                 format_func=lambda x: "Assign Personnel..." if x == "" else x
             )
+
         with col2:
             # 5. Priority Placeholder
             priority = st.selectbox(
                 "Priority", 
-                options=["", "Low", "Medium", "High"],
+                options=["", "Low", "Medium", "High", "Critical"],
                 format_func=lambda x: "Set Priority..." if x == "" else x
             )
         with col3:
@@ -126,23 +134,110 @@ with tab2:
     
     search_q = st.text_input("🔍 Search by Machine ID or Technician", placeholder="Type to filter list...")
     
+    user_role = st.session_state.get("user_role")
+    user_name = st.session_state.get("user_name")
+
     schedule_df = get_all_preventive_schedules()
+
+    if user_role == "Technician":
+        schedule_df = schedule_df[
+            schedule_df["technician"].astype(str).str.strip()
+                == str(user_name).strip()
+        ].copy()
+
     if not schedule_df.empty:
         if search_q:
             schedule_df = schedule_df[schedule_df['machine_id'].str.contains(search_q, case=False) | schedule_df['technician'].str.contains(search_q, case=False)]
 
         for _, row in schedule_df.iterrows():
             with st.container(border=True):
-                c1, c2, c3, c4, c5 = st.columns([2, 2, 2, 2, 0.5])
+                c1, c2, c3, c4, c5, c6 = st.columns([2, 2, 2, 2, 0.6, 0.6])
                 c1.write(f"**Asset:** {row['machine_id']}")
                 c2.write(f"**Task:** {row['maintenance_type']}")
                 c3.write(f"**Due:** {row['next_due_date']}")
                 c4.write(f"**Status:** {row['status']}")
                 
+                if c5.button("✏️", key=f"edit_{row['schedule_id']}", help="Edit this schedule"):
+                    st.session_state.edit_schedule_id = row["schedule_id"]
+                    st.rerun()
+
                 # --- DELETE BUTTON ---
-                if c5.button("🗑️", key=f"del_{row['schedule_id']}", help="Delete this schedule"):
+                if c6.button("🗑️", key=f"del_{row['schedule_id']}", help="Delete this schedule"):
                     delete_preventive_schedule(row['schedule_id'])
                     st.rerun()
+
+                # --- EDIT SCHEDULE ---
+                if st.session_state.edit_schedule_id == row["schedule_id"]:
+                    with st.container(border=True):
+                        st.markdown("### ✏️ Edit Maintenance Schedule")
+
+                        technicians_df = get_technicians()
+                        technician_names = technicians_df["name"].tolist()
+                        maintenance_options = [
+                            "Preventive Inspection", "Lubrication", "Calibration",
+                            "Cleaning", "Safety Inspection"
+                        ]
+                        frequency_options = ["Weekly", "Monthly", "Quarterly", "Yearly"]
+                        priority_options = ["Low", "Medium", "High", "Critical"]
+
+                        edit_col1, edit_col2 = st.columns(2)
+                        with edit_col1:
+                            edit_maintenance_type = st.selectbox(
+                                "Maintenance Activity", maintenance_options,
+                                index=maintenance_options.index(row["maintenance_type"])
+                                if row["maintenance_type"] in maintenance_options else 0,
+                                key=f"edit_type_{row['schedule_id']}"
+                            )
+                            edit_frequency = st.selectbox(
+                                "Frequency", frequency_options,
+                                index=frequency_options.index(row["frequency"])
+                                if row["frequency"] in frequency_options else 0,
+                                key=f"edit_frequency_{row['schedule_id']}"
+                            )
+                            edit_start_date = st.date_input(
+                                "Start Date", value=pd.to_datetime(row["start_date"]).date(),
+                                key=f"edit_date_{row['schedule_id']}"
+                            )
+
+                        with edit_col2:
+                            edit_technician = st.selectbox(
+                                "Technician", technician_names,
+                                index=technician_names.index(row["technician"])
+                                if row["technician"] in technician_names else 0,
+                                key=f"edit_tech_{row['schedule_id']}"
+                            )
+                            edit_priority = st.selectbox(
+                                "Priority", priority_options,
+                                index=priority_options.index(row["priority"])
+                                if row["priority"] in priority_options else 0,
+                                key=f"edit_priority_{row['schedule_id']}"
+                            )
+
+                        save_col, cancel_col = st.columns(2)
+                        with save_col:
+                            if st.button(
+                                "💾 Save Changes", type="primary", use_container_width=True,
+                                key=f"save_edit_{row['schedule_id']}"
+                            ):
+                                update_preventive_schedule(
+                                    schedule_id=row["schedule_id"],
+                                    maintenance_type=edit_maintenance_type,
+                                    frequency=edit_frequency,
+                                    start_date=edit_start_date,
+                                    technician=edit_technician,
+                                    priority=edit_priority
+                                )
+                                st.session_state.edit_schedule_id = None
+                                st.success("✅ Maintenance schedule updated.")
+                                st.rerun()
+
+                        with cancel_col:
+                            if st.button(
+                                "Cancel", use_container_width=True,
+                                key=f"cancel_edit_{row['schedule_id']}"
+                            ):
+                                st.session_state.edit_schedule_id = None
+                                st.rerun()
 
                 # --- UPDATE STATUS ---
                 new_status = st.selectbox("Update Status", ["Upcoming", "In Progress", "Completed"], 
@@ -182,28 +277,132 @@ with tab2:
                             st.rerun()
 
 # ==========================================
-# TAB 3: TRACKING & CALENDAR (Restore Overdue/Upcoming)
+# TAB 3: TRACKING & CALENDAR
 # ==========================================
 with tab3:
-    st.subheader("📅 Maintenance Calendar")
-    cal_df = get_all_preventive_schedules()
-    if not cal_df.empty:
-        cal_df['start_date'] = pd.to_datetime(cal_df['start_date'])
-        cal_df['next_due_date'] = pd.to_datetime(cal_df['next_due_date'])
-        fig = px.timeline(cal_df, x_start="start_date", x_end="next_due_date", y="machine_id", color="priority",
-                         color_discrete_map={"High": "#EF4444", "Medium": "#F59E0B", "Low": "#22C55E"})
-        fig.update_yaxes(autorange="reversed")
-        st.plotly_chart(fig, use_container_width=True)
 
-    
+    st.subheader("📅 Maintenance Calendar")
+
+    # Get all schedules
+    cal_df = get_all_preventive_schedules()
+
+    # Technicians see only their schedules
+    if user_role == "Technician" and not cal_df.empty:
+        cal_df = cal_df[
+            cal_df["technician"].astype(str).str.strip()
+            == str(user_name).strip()
+        ].copy()
+
+    if not cal_df.empty:
+
+        cal_df["start_date"] = pd.to_datetime(
+            cal_df["start_date"]
+        )
+
+        cal_df["next_due_date"] = pd.to_datetime(
+            cal_df["next_due_date"]
+        )
+
+        fig = px.timeline(
+            cal_df,
+            x_start="start_date",
+            x_end="next_due_date",
+            y="machine_id",
+            color="priority",
+            color_discrete_map={
+                "High": "#EF4444",
+                "Medium": "#F59E0B",
+                "Low": "#22C55E"
+            }
+        )
+
+        fig.update_yaxes(autorange="reversed")
+
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )
+
+    else:
+        st.info("📅 No maintenance schedules available.")
+
+
+    # ------------------------------------------
+    # UPCOMING TASKS
+    # ------------------------------------------
+
     st.subheader("⏳ Upcoming Tasks")
-    st.dataframe(get_upcoming_maintenance(), use_container_width=True, hide_index=True)
-    
+
+    up_df = get_upcoming_maintenance()
+
+    if user_role == "Technician" and not up_df.empty:
+        up_df = up_df[
+            up_df["technician"].astype(str).str.strip()
+            == str(user_name).strip()
+        ].copy()
+
+    if up_df.empty:
+        st.info("No upcoming maintenance tasks.")
+
+    else:
+        st.dataframe(
+            up_df,
+            use_container_width=True,
+            hide_index=True
+        )
+
+
+    # ------------------------------------------
+    # OVERDUE TASKS
+    # ------------------------------------------
+
     st.subheader("⚠️ Overdue Tasks")
-    st.dataframe(get_overdue_maintenance(), use_container_width=True, hide_index=True)
+
+    over_df = get_overdue_maintenance()
+
+    if user_role == "Technician" and not over_df.empty:
+        over_df = over_df[
+            over_df["technician"].astype(str).str.strip()
+            == str(user_name).strip()
+        ].copy()
+
+    if over_df.empty:
+        st.success("✅ No overdue maintenance tasks.")
+
+    else:
+        st.dataframe(
+            over_df,
+            use_container_width=True,
+            hide_index=True
+        )
+
+
+    # ------------------------------------------
+    # MAINTENANCE HISTORY
+    # ------------------------------------------
 
     st.subheader("📜 Maintenance History")
-    st.dataframe(get_maintenance_history(), use_container_width=True, hide_index=True)
+
+    his_df = get_maintenance_history()
+
+    if user_role == "Technician" and not his_df.empty:
+
+        # Only filter if technician column exists
+        if "technician" in his_df.columns:
+            his_df = his_df[
+                his_df["technician"].astype(str).str.strip()
+                == str(user_name).strip()
+            ].copy()
+
+    if his_df.empty:
+        st.info("No maintenance history available.")
+
+    else:
+        st.dataframe(
+            his_df,
+            use_container_width=True,
+            hide_index=True
+        )
 
 # ==========================================
 # TAB 4: AI RECOMMENDATIONS (Restore)
@@ -254,6 +453,22 @@ with tab4:
                 st.divider()
                 st.subheader("⚡ Quick Action")
                 st.write(f"Convert this AI recommendation into a formal Work Order for **{machine_id_ai}**.")
+
+                # Get technicians from database
+                technicians_df = get_technicians()
+
+                if technicians_df.empty:
+                    st.warning("⚠ No technicians found in the database.")
+                    st.stop()
+
+                technician_names = technicians_df["name"].tolist()
+
+                selected_technician = st.selectbox(
+                    "👨‍🔧 Assign Technician",
+                    technician_names,
+                    index=0,
+                    key="pm_assigned_technician"
+                )
                 
                 # --- THE APPLY BUTTON ---
                 if st.button("🚀 Apply Recommendation & Create Work Order", use_container_width=True, type="primary"):
@@ -261,19 +476,22 @@ with tab4:
                     # Pull the clean description we saved earlier
                     # This avoids the "========" header issues
                     detailed_desc = st.session_state.get("pm_ai_description", "Maintenance required based on AI sensor analysis.")
-
+                    # Remove AI heading and separator lines
+                    detailed_desc = detailed_desc.replace("AI GENERATED:", "")
+                    detailed_desc = detailed_desc.replace("=", "")
+                    detailed_desc = detailed_desc.strip()
                     # A. Create the Work Order in Module 5
                     new_wo_id = insert_work_order(
                         machine_id=st.session_state["pm_ai_machine"],
                         machine_type=st.session_state["pm_ai_type"],
                         priority="High", 
                         maintenance_type="Predictive",
-                        technician="AI Assigned Specialist",
+                        technician=selected_technician,
                         due_date=date.today().strftime("%Y-%m-%d"),
                         estimated_cost=5000.0,
                         estimated_time="3 Hours",
                         # PASSING THE CLEAN DESCRIPTION HERE:
-                        description=f"AI GENERATED: {detailed_desc}"
+                        description=detailed_desc
                     )
 
                     # B. Also create a log in the Preventive Schedules table
@@ -283,7 +501,7 @@ with tab4:
                         maintenance_type="AI Recommended Fix",
                         frequency="One-Time",
                         start_date=date.today(),
-                        technician="AI Assigned Specialist",
+                        technician=selected_technician,
                         priority="High"
                     )
                     

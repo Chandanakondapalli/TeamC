@@ -73,6 +73,9 @@ def init_db():
         """)
         conn.commit()
 
+    create_users_table()
+    seed_users()
+
 
 
 
@@ -121,7 +124,7 @@ def insert_work_order(
                 "Open",
                 created_date,
                 due_date,
-                estimated_cost,
+                float(estimated_cost),
                 estimated_time,
                 description,
             ),
@@ -549,26 +552,34 @@ def seed_users():
 
 
 def authenticate_user(username, password, role):
-    conn = get_connection()
-    cursor = conn.cursor()
 
-    cursor.execute("""
-        SELECT username, name, role
-        FROM users
-        WHERE username = ?
-        AND password = ?
-        AND role = ?
-    """, (username, password, role))
+    username = username.strip()
+    password = password.strip()
+    role = role.strip()
 
-    user = cursor.fetchone()
+    with get_connection() as conn:
 
-    conn.close()
+        row = conn.execute(
+            """
+            SELECT username, name, role
+            FROM users
+            WHERE LOWER(username) = LOWER(?)
+              AND password = ?
+              AND role = ?
+            """,
+            (
+                username,
+                password,
+                role
+            )
+        ).fetchone()
 
-    if user:
+    if row:
+
         return {
-            "username": user[0],
-            "name": user[1],
-            "role": user[2]
+            "username": row["username"],
+            "name": row["name"],
+            "role": row["role"]
         }
 
     return None
@@ -587,3 +598,44 @@ def get_technicians():
     conn.close()
 
     return df
+
+
+def add_user(username, password, name, role):
+
+    username = username.strip()
+    name = name.strip()
+    password = password.strip()
+    role = role.strip()
+
+    if not username or not password or not name:
+        return False, "All fields are required."
+
+    if role not in ["Employee", "Technician"]:
+        return False, "Invalid role."
+
+    try:
+        with get_connection() as conn:
+
+            conn.execute(
+                """
+                INSERT INTO users
+                (username, password, name, role)
+                VALUES (?, ?, ?, ?)
+                """,
+                (
+                    username,
+                    password,
+                    name,
+                    role
+                )
+            )
+
+            conn.commit()
+
+        return True, "User added successfully."
+
+    except sqlite3.IntegrityError:
+        return False, "Username already exists."
+
+    except Exception as e:
+        return False, f"Database error: {e}"

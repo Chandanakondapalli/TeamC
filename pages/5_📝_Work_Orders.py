@@ -7,6 +7,11 @@ from utils.ui import page_header, load_css
 from utils.themes import *
 from utils.database import *
 from utils.ai_report import *
+from utils.database import get_technicians
+
+technicians_df = get_technicians()
+
+technician_names = technicians_df["name"].tolist()
 from utils.auth import require_login, hide_login_from_sidebar
 
 require_login()
@@ -154,7 +159,7 @@ with st.container(border=True):
                     )
                     priority = st.selectbox(
                         "Priority",
-                        ["Low", "Medium", "High"],
+                        ["Low", "Medium", "High", "Critical"],
                         index=None,
                         placeholder="Select Priority"
                     )
@@ -170,10 +175,11 @@ with st.container(border=True):
                 with right:
                     st.markdown("#### 👨‍🔧 Assignment Details")
                     technician = st.selectbox(
-                        "Assign Staff", 
-                        options=["", "John Smith", "Sarah Wilson", "Michael Brown", "David Lee"],
-                        format_func=lambda x: "Assign Personnel..." if x == "" else x
-                    )
+                        "Assign Technician",
+                        technician_names,
+                        index=None,
+                        placeholder="Select Technician..."
+                )
                     due_date = st.date_input("Due Date", min_value=date.today())
                     estimated_cost = st.number_input("Estimated Cost", value=2500.0, step=100.0)
                     estimated_time = st.text_input("Estimated Time", value="2 Hours")
@@ -299,8 +305,7 @@ with st.container(border=True):
                                 st.markdown("**Estimated Time**")
                                 st.write(work_order["estimated_time"])
 
-
-            # Cost
+                        # Cost
                         with st.container(border=True):
 
                             st.markdown("#### 💰 Estimated Cost")
@@ -363,9 +368,8 @@ with st.container(border=True):
                         st.markdown(f"### Editing Work Order: {selected_id}")
                         c1, c2 = st.columns(2)
                         with c1:
-                            u_tech = st.text_input("Technician", work_order["technician"])
-                            u_priority = st.selectbox("Priority", ["Low", "Medium", "High"], 
-                                                     index=["Low", "Medium", "High"].index(work_order["priority"]))
+                            u_tech = st.selectbox("Assign Technician",technician_names,index=None,placeholder=work_order["technician"])
+                            u_priority = st.selectbox("Priority", ["Low", "Medium", "High", "Critical"], index=["Low", "Medium", "High", "Critical"].index(work_order["priority"]))
                             u_status = st.selectbox("Status", ["Open", "In Progress", "Completed"], 
                                                    index=["Open", "In Progress", "Completed"].index(work_order["status"]))
                         with c2:

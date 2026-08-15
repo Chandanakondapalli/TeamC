@@ -1,0 +1,3 @@
+Job ID,Product ID,Machine ID (UDI),Machine Type,Technician,Priority,Task,Status,Assigned Date
+JOB-20260722194909,H29424,11,H,Kumar,Low,Machine is operating normally.,Cancelled,2026-07-22 19:49:09
+JOB-20260722203925,H29425,12,H,Kumar,High,Machine is operating normally.,Completed,2026-07-22 20:39:25

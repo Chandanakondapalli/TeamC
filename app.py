@@ -10,7 +10,7 @@ from machine_explorer import show_machine_explorer
 from work_orders_hub import show_work_orders_hub
 from maintenance import show_maintenance_module
 
-st.set_page_config(page_title="Agentice FacilityOps AI Platform", layout="wide")
+st.set_page_config(page_title="Agentic FacilityOps AI Platform", layout="wide", initial_sidebar_state="expanded")
 
 # Initialize Database
 init_db()
@@ -45,7 +45,7 @@ if "user_db" not in st.session_state:
     }
 
 # -------------------------------------------------------------
-# APPLICATION THEME (SaaS Dark Theme)
+# APPLICATION THEME & HORIZONTAL TOP NAVIGATION STYLING
 # -------------------------------------------------------------
 st.markdown("""
 <style>
@@ -65,6 +65,53 @@ section[data-testid="stSidebar"] {
 }
 section[data-testid="stSidebar"] * { 
     color: #f8fafc !important; 
+}
+
+/* TOP HORIZONTAL NAVIGATION BAR STYLING */
+div[data-testid="stHorizontalBlock"] {
+    align-items: center;
+}
+
+/* Custom Segmented Horizontal Radio Navigation */
+div.row-widget.stRadio > div[role="radiogroup"] {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 8px;
+    background-color: #1e293b;
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 1px solid #334155;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    margin-bottom: 20px;
+    overflow-x: auto;
+}
+
+div.row-widget.stRadio > div[role="radiogroup"] > label {
+    background-color: transparent !important;
+    padding: 8px 16px !important;
+    border-radius: 8px !important;
+    color: #94a3b8 !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    border: none !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+}
+
+div.row-widget.stRadio > div[role="radiogroup"] > label:hover {
+    color: #ffffff !important;
+    background-color: #334155 !important;
+}
+
+/* Selected Tab Styling */
+div.row-widget.stRadio > div[role="radiogroup"] [data-checked="true"] {
+    background: linear-gradient(90deg, #2563eb 0%, #06b6d4 100%) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    box-shadow: 0px 2px 8px rgba(37, 99, 235, 0.4);
 }
 
 .sidebar-status-card { 
@@ -115,7 +162,6 @@ div[data-baseweb="select"] > div, div[data-baseweb="input"] > div {
 div[data-baseweb="select"] * { color: #ffffff !important; }
 ul[role="listbox"] { background-color: #1e293b !important; }
 li[role="option"] { color: #ffffff !important; }
-div[role="radiogroup"] label * { color: #ffffff !important; }
 
 div[data-testid="stTable"], div[data-testid="stDataFrame"] {
     background-color: #1e293b !important;
@@ -157,7 +203,7 @@ def show_auth_page():
         if st.session_state.auth_mode == "login":
             st.markdown("""
                 <div style="text-align: center; margin-top: 40px; margin-bottom: 25px;">
-                    <h1 style="color: #38bdf8 !important; margin: 0;">⚙️ AI4I Maintenance Hub</h1>
+                    <h1 style="color: #38bdf8 !important; margin: 0;">⚙️ Agentic FacilityOps AI Platform</h1>
                     <p style="color: #94a3b8 !important; margin-top: 6px;">Sign in to access your dashboard</p>
                 </div>
             """, unsafe_allow_html=True)
@@ -267,7 +313,7 @@ Provide:
         yield f"❌ **Ollama Connection Error:**\n\n`{e}`"
 
 # -------------------------------------------------------------
-# SIDEBAR & USER PROFILE BADGE
+# SIDEBAR (USER PROFILE & FILTERS ONLY)
 # -------------------------------------------------------------
 role_badge_color = "#38bdf8" if st.session_state.role == "admin" else "#f59e0b"
 st.sidebar.markdown(f"""
@@ -287,31 +333,6 @@ if st.sidebar.button("🚪 Logout", use_container_width=True):
     st.session_state.user_name = None
     st.rerun()
 
-st.sidebar.markdown("---")
-
-# -------------------------------------------------------------
-# ROLE-BASED NAVIGATION ROUTING (EXACT REQUESTED ORDER)
-# Dashboard ➔ ED Analysis ➔ Machine Explorer ➔ AI Predictive Diagnostic ➔ Work Orders Hub ➔ Preventive Maintenance
-# -------------------------------------------------------------
-if st.session_state.role == "admin":
-    nav_options = [
-        "Dashboard", 
-        "ED Analysis",
-        "Machine Explorer", 
-        "AI Predictive Diagnostic",
-        "Work Orders Hub",
-        "Preventive Maintenance"
-    ]
-else:
-    nav_options = [
-        "Machine Explorer", 
-        "Work Orders Hub",
-        "Preventive Maintenance"
-    ]
-
-page = st.sidebar.radio("Navigation", nav_options)
-
-# Sidebar Data Filters
 st.sidebar.markdown("---")
 st.sidebar.header("Data Filters")
 
@@ -347,6 +368,33 @@ st.sidebar.markdown(f"""
         <div style="font-size: 12px;">{status_desc}</div>
     </div>
 """, unsafe_allow_html=True)
+
+# -------------------------------------------------------------
+# TOP HORIZONTAL NAVIGATION (REPLACES SIDEBAR RADIO)
+# -------------------------------------------------------------
+if st.session_state.role == "admin":
+    nav_options = [
+        "Dashboard", 
+        "ED Analysis",
+        "Machine Explorer", 
+        "AI Predictive Diagnostic",
+        "Work Orders Hub",
+        "Preventive Maintenance"
+    ]
+else:
+    nav_options = [
+        "Machine Explorer", 
+        "Work Orders Hub",
+        "Preventive Maintenance"
+    ]
+
+# Render Nav Items as Horizontal Tabs on Top
+page = st.radio(
+    "Navigation", 
+    options=nav_options, 
+    horizontal=True, 
+    label_visibility="collapsed"
+)
 
 # -------------------------------------------------------------
 # PAGE ROUTING

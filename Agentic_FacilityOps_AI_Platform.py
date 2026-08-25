@@ -152,6 +152,7 @@ else:
         allowed_pages = [
             home,
             machine_explorer,
+            ai_assistant,
             work_orders,
             preventive_maintenance
         ]

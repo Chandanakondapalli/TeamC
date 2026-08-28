@@ -124,7 +124,7 @@ def insert_work_order(
                 "Open",
                 created_date,
                 due_date,
-                float(estimated_cost),
+                float(str(estimated_cost).replace(",", "").replace("₹", "").strip()),
                 estimated_time,
                 description,
             ),

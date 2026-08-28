@@ -181,10 +181,10 @@ def maintenance_priority(risk):
 def maintenance_cost(risk):
 
     costs = {
-        "Low": "2,500",
-        "Medium": "8,000",
-        "High": "20,000",
-        "Critical": "50,000"
+        "Low": 2500,
+        "Medium": 8000,
+        "High": 20000,
+        "Critical": 50000
     }
 
     return costs[risk]
